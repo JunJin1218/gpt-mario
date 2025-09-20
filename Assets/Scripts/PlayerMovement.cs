@@ -3,10 +3,17 @@ using System.Collections.Generic;
 using UnityEngine;
 public class PlayerMovement : MonoBehaviour
 {
+    // ===  PUBLIC   ===
     public float HorizontalAcc = 10;
     public float DecellerationTime = 0.1f;
     public float upSpeed = 10;
     public float maxSpeed = 20;
+    public Vector3 boxSize;
+    public float maxDistance;
+    public LayerMask layerMask;
+    public bool showBox;
+
+    // ===  PRIVATE  ===
     private bool onGroundState = true;
     private Rigidbody2D marioBody;
     private SpriteRenderer marioSprite;
@@ -21,7 +28,7 @@ public class PlayerMovement : MonoBehaviour
         Application.targetFrameRate = 144;
         marioBody = GetComponent<Rigidbody2D>();
         marioSprite = GetComponent<SpriteRenderer>();
-
+        marioBody.constraints = RigidbodyConstraints2D.FreezeRotation;
     }
 
     void detectInput(ref bool pressed)
@@ -40,9 +47,33 @@ public class PlayerMovement : MonoBehaviour
     {
         // Check if Mario is on ground (prevent double-jump)
         // --> Check colliding object has Tag "Ground"
-        if (collision.gameObject.CompareTag("Ground")) onGroundState = true;
+        // if (collision.gameObject.CompareTag("Ground")) onGroundState = true;
+        onGroundState = onGroundCheck();
 
         // Debug.Log($"{name} COLLIDE {collision.collider.name}");
+    }
+
+    private bool onGroundCheck()
+    {
+        if (Physics2D.BoxCast(transform.position, boxSize, 0, -transform.up, maxDistance, layerMask))
+        {
+            // Debug.Log("on ground");
+            return true;
+        }
+        else
+        {
+            // Debug.Log("not on ground");
+            return false;
+        }
+    }
+
+    void OnDrawGizmos()
+    {
+        if (showBox)
+        {
+            Gizmos.color = Color.yellow;
+            Gizmos.DrawCube(transform.position - transform.up * maxDistance, boxSize);
+        }
     }
 
     // Update is called once per frame

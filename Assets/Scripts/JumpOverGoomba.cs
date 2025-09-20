@@ -8,8 +8,7 @@ public class JumpOverGoomba : MonoBehaviour
     public Transform enemyLocation;
     public GameObject enemies;
     public TextMeshProUGUI scoreText;
-
-    private bool onGroundState;
+    public bool showBox = true;
 
     private bool countScoreState = false;
     public Vector3 boxSize;
@@ -27,7 +26,6 @@ public class JumpOverGoomba : MonoBehaviour
         // mario jumps
         if (Input.GetKeyDown("space") && onGroundCheck())
         {
-            onGroundState = false;
             countScoreState = true;
         }
 
@@ -38,7 +36,7 @@ public class JumpOverGoomba : MonoBehaviour
         // when jumping, and Goomba is near Mario and we haven't registered our score
         // Problem: when jumping over 2 < enemies, giving only 1 point
         // Problem2: while jumping over goomba + press space very fast = multiple scores
-        if (!onGroundState && countScoreState)
+        if (countScoreState)
         {
             foreach (Transform enemyTransform in enemies.transform)
             {
@@ -53,12 +51,6 @@ public class JumpOverGoomba : MonoBehaviour
 
         }
     }
-
-    void OnCollisionEnter2D(Collision2D col)
-    {
-        if (col.gameObject.CompareTag("Ground")) onGroundState = true;
-    }
-
 
     private bool onGroundCheck()
     {
@@ -76,8 +68,11 @@ public class JumpOverGoomba : MonoBehaviour
 
     void OnDrawGizmos()
     {
-        Gizmos.color = Color.yellow;
-        Gizmos.DrawCube(transform.position - transform.up * maxDistance, boxSize);
+        if (showBox)
+        {
+            Gizmos.color = Color.yellow;
+            Gizmos.DrawCube(transform.position - transform.up * maxDistance, boxSize);
+        }
     }
 
 }

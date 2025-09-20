@@ -5178,6 +5178,12 @@ MonoBehaviour:
   DecellerationTime: 1
   upSpeed: 26
   maxSpeed: 15
+  boxSize: {x: 0.75, y: 1.15, z: 0}
+  maxDistance: 0
+  layerMask:
+    serializedVersion: 2
+    m_Bits: 72
+  showBox: 0
 --- !u!61 &1218096671
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -5257,11 +5263,12 @@ MonoBehaviour:
   enemyLocation: {fileID: 1740735882}
   enemies: {fileID: 1740735881}
   scoreText: {fileID: 811186159}
-  boxSize: {x: 0.28, y: 1.33, z: 0}
+  showBox: 0
+  boxSize: {x: 0.28, y: 1.2, z: 0}
   maxDistance: 0
   layerMask:
     serializedVersion: 2
-    m_Bits: 8
+    m_Bits: 72
 --- !u!1 &1255076283
 GameObject:
   m_ObjectHideFlags: 0
