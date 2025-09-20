@@ -12,6 +12,7 @@ public class EnemyMovement : MonoBehaviour
     private Vector2 velocity;
 
     private Rigidbody2D enemyBody;
+    private int obstacleLayer;
 
     public Vector3 startPosition = new Vector3(0.0f, 0.0f, 0.0f);
 
@@ -23,10 +24,11 @@ public class EnemyMovement : MonoBehaviour
         startPosition = transform.localPosition;
         originalX = transform.position.x;
         ComputeVelocity();
+        obstacleLayer = LayerMask.NameToLayer("Obstacle");
     }
     void ComputeVelocity()
     {
-        velocity = new Vector2((moveRight) * maxOffset / enemyPatroltime, 0);
+        velocity = new Vector2(moveRight * maxOffset / enemyPatroltime, 0);
     }
     void Movegoomba()
     {
@@ -37,6 +39,17 @@ public class EnemyMovement : MonoBehaviour
     {
 
     }
+
+    private void OnCollisionEnter2D(Collision2D col)
+    {
+        // 벽(Obstacle 레이어)과 충돌하면 방향 전환
+        if (col.collider.gameObject.layer == obstacleLayer)
+        {
+            moveRight *= -1;
+            ComputeVelocity();
+        }
+    }
+
 
     void FixedUpdate()
     {
