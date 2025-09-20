@@ -11,7 +11,7 @@ public class CameraMovement : MonoBehaviour
     void LateUpdate()
     {
         targetx = player.transform.position.x <= 0 ? 0 : player.transform.position.x;
-        targety = player.transform.position.y <= 0 ? 0 : player.transform.position.y;
+        targety = player.transform.position.y <= 0 ? -1 : player.transform.position.y - 1;
         Vector3 targetPos = new Vector3(targetx, targety, transform.position.z) + offset;
         Vector3 smoothPos = Vector3.Lerp(transform.position, targetPos, smoothSpeed);
         transform.position = smoothPos;

@@ -3,7 +3,8 @@ using System.Collections.Generic;
 using UnityEngine;
 public class PlayerMovement : MonoBehaviour
 {
-    public float speed = 10;
+    public float HorizontalAcc = 10;
+    public float DecellerationTime = 0.1f;
     public float upSpeed = 10;
     public float maxSpeed = 20;
     private bool onGroundState = true;
@@ -11,6 +12,7 @@ public class PlayerMovement : MonoBehaviour
     private SpriteRenderer marioSprite;
     private bool faceRightState = true;
     private bool jumpPressed = false;
+    private float moveHorizontal = 0;
 
     // Start is called before the first frame update
     void Start()
@@ -46,38 +48,52 @@ public class PlayerMovement : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (Input.GetKeyDown("a") && faceRightState) { setMarioFace(false); }
+        if (!GPTManager.Instance.useGPTControl)
+        {
+            if (Input.GetKeyDown("a") && faceRightState) { setMarioFace(false); }
+            if (Input.GetKeyDown("d") && !faceRightState) { setMarioFace(true); }
+            detectInput(ref jumpPressed);
+            moveHorizontal = Input.GetAxisRaw("Horizontal"); // moveHorizontal = either 0, +1, -1
+        }
 
-        if (Input.GetKeyDown("d") && !faceRightState) { setMarioFace(true); }
-
-        detectInput(ref jumpPressed);
     }
 
     // FixedUpdate is called 50 times a second
     void FixedUpdate()
     {
-        // moveHorizontal = either 0, +1, -1
-        float moveHorizontal = Input.GetAxisRaw("Horizontal");
-        if (Mathf.Abs(moveHorizontal) > 0)
+        var velocity = marioBody.linearVelocity;
+        if (!GPTManager.Instance.useGPTControl)
         {
-            Vector2 movement = new Vector2(moveHorizontal, 0);
-            // Clamp maxspeed
-            if (marioBody.linearVelocity.magnitude < maxSpeed)
-                marioBody.AddForce(movement * speed);
-        }
+            if (Mathf.Abs(moveHorizontal) > 0)
+            {
+                float target = moveHorizontal * maxSpeed;
+                velocity.x = Mathf.MoveTowards(velocity.x, target, HorizontalAcc * Time.fixedDeltaTime);
+            }
+            else { if (onGroundState) velocity.x = Mathf.MoveTowards(velocity.x, 0f, DecellerationTime); }
 
-        // stop
-        if (Input.GetKeyUp("a") || Input.GetKeyUp("d"))
-        {
-            // stop
-            marioBody.linearVelocity = Vector2.zero;
+            if (jumpPressed && onGroundState)
+            {
+                velocity.y = upSpeed;
+                onGroundState = false;
+                jumpPressed = false;
+            }
+            marioBody.linearVelocity = velocity;
         }
-
-        if (jumpPressed && onGroundState)
+        else
         {
-            marioBody.AddForce(Vector2.up * upSpeed, ForceMode2D.Impulse);
-            onGroundState = false;
-            jumpPressed = false;
+            if (GPTManager.Instance.State == GPTState.Playing)
+            {
+                float target = GPTManager.Instance.dir * maxSpeed;
+                velocity.x = Mathf.MoveTowards(velocity.x, target, HorizontalAcc * Time.fixedDeltaTime);
+            }
+            else { if (onGroundState) velocity.x = Mathf.MoveTowards(velocity.x, 0f, DecellerationTime); }
+            if (GPTManager.Instance.doJump && onGroundState)
+            {
+                velocity.y = upSpeed;
+                onGroundState = false;
+                GPTManager.Instance.doJump = false;
+            }
+            marioBody.linearVelocity = velocity;
         }
         // Debug.Log(marioBody.linearVelocity);
         // Debug.Log(onGroundState);

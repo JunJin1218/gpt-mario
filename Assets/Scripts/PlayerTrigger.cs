@@ -11,6 +11,7 @@ public class PlayerTrigger : MonoBehaviour
     public JumpOverGoomba jumpOverGoomba;
     public CanvasSwitch gameOverCanvasManager;
     public CanvasSwitch inGameCanvasManager;
+    public CanvasSwitch GPTCanvasManager;
 
     void Start()
     {
@@ -24,6 +25,7 @@ public class PlayerTrigger : MonoBehaviour
             // Debug.Log("Collided with goomba!");
             Time.timeScale = 0.0f;
             inGameCanvasManager.switchCanvasCallback(false);
+            GPTCanvasManager.switchCanvasCallback(false);
             gameOverCanvasManager.switchCanvasCallback(true);
         }
     }
@@ -48,6 +50,7 @@ public class PlayerTrigger : MonoBehaviour
         scoreText.text = "Score: 0";
         // reset Canvas
         inGameCanvasManager.switchCanvasCallback(true);
+        GPTCanvasManager.switchCanvasCallback(true);
         gameOverCanvasManager.switchCanvasCallback(false);
         // reset Goomba
         foreach (Transform eachChild in enemies.transform)

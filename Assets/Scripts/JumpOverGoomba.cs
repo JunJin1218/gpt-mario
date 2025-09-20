@@ -47,7 +47,7 @@ public class JumpOverGoomba : MonoBehaviour
                     countScoreState = false;
                     GameManager.Instance.AddScore(1);
                     UIManager.Instance.updateScoreTexts();
-                    Debug.Log(GameManager.Instance.GetScore());
+                    // Debug.Log(GameManager.Instance.GetScore());
                 }
             }
 
@@ -64,12 +64,12 @@ public class JumpOverGoomba : MonoBehaviour
     {
         if (Physics2D.BoxCast(transform.position, boxSize, 0, -transform.up, maxDistance, layerMask))
         {
-            Debug.Log("on ground");
+            // Debug.Log("on ground");
             return true;
         }
         else
         {
-            Debug.Log("not on ground");
+            // Debug.Log("not on ground");
             return false;
         }
     }
