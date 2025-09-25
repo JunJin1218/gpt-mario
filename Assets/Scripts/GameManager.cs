@@ -11,6 +11,8 @@ public class GameManager : MonoBehaviour
     public Transform marioTransform;
     public ScoreMode scoreMode;
     public int Score { get; private set; } = 0;
+    [System.NonSerialized] public bool playerAlive = true;
+
 
     // === PRIVATE ===
     private System.Action scoringMethod;

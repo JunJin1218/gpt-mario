@@ -12,6 +12,7 @@ public class PlayerMovement : MonoBehaviour
     public float maxDistance;
     public LayerMask layerMask;
     public bool showBox;
+    public Animator marioAnimator;
 
     // ===  PRIVATE  ===
     private bool onGroundState = true;
@@ -29,6 +30,7 @@ public class PlayerMovement : MonoBehaviour
         marioBody = GetComponent<Rigidbody2D>();
         marioSprite = GetComponent<SpriteRenderer>();
         marioBody.constraints = RigidbodyConstraints2D.FreezeRotation;
+        marioAnimator.SetBool("onGround", onGroundState);
     }
 
     void detectInput(ref bool pressed)
@@ -58,6 +60,7 @@ public class PlayerMovement : MonoBehaviour
         if (Physics2D.BoxCast(transform.position, boxSize, 0, -transform.up, maxDistance, layerMask))
         {
             // Debug.Log("on ground");
+            marioAnimator.SetBool("onGround", true);
             return true;
         }
         else
@@ -85,6 +88,7 @@ public class PlayerMovement : MonoBehaviour
             if (Input.GetKeyDown("d") && !faceRightState) { setMarioFace(true); }
             detectInput(ref jumpPressed);
             moveHorizontal = Input.GetAxisRaw("Horizontal"); // moveHorizontal = either 0, +1, -1
+            marioAnimator.SetFloat("xSpeed", Mathf.Abs(marioBody.linearVelocity.x));
         }
 
     }
@@ -92,6 +96,7 @@ public class PlayerMovement : MonoBehaviour
     // FixedUpdate is called 50 times a second
     void FixedUpdate()
     {
+        if (!GameManager.Instance.playerAlive) return;
         var velocity = marioBody.linearVelocity;
         if (!GPTManager.Instance.useGPTControl)
         {
@@ -107,6 +112,7 @@ public class PlayerMovement : MonoBehaviour
                 velocity.y = upSpeed;
                 onGroundState = false;
                 jumpPressed = false;
+                marioAnimator.SetBool("onGround", false);
             }
             marioBody.linearVelocity = velocity;
         }
@@ -123,6 +129,7 @@ public class PlayerMovement : MonoBehaviour
                 velocity.y = upSpeed;
                 onGroundState = false;
                 GPTManager.Instance.doJump = false;
+                marioAnimator.SetBool("onGround", true);
             }
             marioBody.linearVelocity = velocity;
         }
@@ -132,16 +139,21 @@ public class PlayerMovement : MonoBehaviour
 
     public void setMarioFace(bool right)
     {
+        if (!GameManager.Instance.playerAlive) return;
         if (!right)
         {
             faceRightState = false;
             marioSprite.flipX = true;
+            if (marioBody.linearVelocity.x > 0.1f)
+                marioAnimator.SetTrigger("onSkid");
         }
 
         if (right)
         {
             faceRightState = true;
             marioSprite.flipX = false;
+            if (marioBody.linearVelocity.x < -0.1f)
+                marioAnimator.SetTrigger("onSkid");
         }
     }
 }

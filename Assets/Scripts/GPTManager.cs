@@ -30,6 +30,8 @@ public class GPTManager : MonoBehaviour
     [NonSerialized] public int dir = 0;
     [NonSerialized] public bool doJump = false;
 
+    [NonSerialized] public Coroutine playRoutine;
+
     void Awake()
     {
         if (Instance != null && Instance != this) { Destroy(gameObject); return; }
@@ -47,6 +49,21 @@ public class GPTManager : MonoBehaviour
     {
         State = s;
         UpdateUI();
+    }
+
+    void Update()
+    {
+
+        if (!GameManager.Instance.playerAlive && playRoutine != null)
+        {
+            StopCoroutine(playRoutine);
+            playRoutine = null;
+
+            ApplyStep(0, "");        // 입력 해제
+            SetState(GPTState.Idle); // 상태 리셋
+            SetStatus("Cancelled."); // 메시지 표시
+        }
+
     }
 
     void UpdateUI()
@@ -97,7 +114,7 @@ public class GPTManager : MonoBehaviour
 
             // 재생 시작
             StopAllCoroutines();
-            StartCoroutine(PlayRoutine(interval, steps));
+            playRoutine = StartCoroutine(PlayRoutine(interval, steps));
         }
         catch (System.Exception ex)
         {
