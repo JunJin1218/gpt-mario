@@ -9,6 +9,7 @@ public class GameManager : MonoBehaviour
     public static GameManager Instance { get; private set; }
     // === PUBLIC ===
     public Transform marioTransform;
+    public Rigidbody2D marioBody;
     public ScoreMode scoreMode;
     public int Score { get; private set; } = 0;
     [System.NonSerialized] public bool playerAlive = true;
@@ -66,6 +67,11 @@ public class GameManager : MonoBehaviour
     public int GetScore()
     {
         return Score;
+    }
+
+    public void resetGame()
+    {
+
     }
 
 }

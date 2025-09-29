@@ -9,6 +9,7 @@ public class PlayerTrigger : MonoBehaviour
     // ===== PUBLIC =====
     public TextMeshProUGUI scoreText;
     public GameObject enemies;
+    public GameObject questionBoxes;
     public JumpOverGoomba jumpOverGoomba;
     public CanvasSwitch gameOverCanvasManager;
     public CanvasSwitch inGameCanvasManager;
@@ -84,6 +85,17 @@ public class PlayerTrigger : MonoBehaviour
         foreach (Transform eachChild in enemies.transform)
         {
             eachChild.transform.localPosition = eachChild.GetComponent<EnemyMovement>().startPosition;
+        }
+        // reset QuestionBox
+        var boxes = questionBoxes.GetComponentsInChildren<QuestionBoxDynamics>();
+        foreach (var box in boxes)
+        {
+            box.resetQuestionBox();
+        }
+        var coins = questionBoxes.GetComponentsInChildren<CoinDynamics>();
+        foreach (var coin in coins)
+        {
+            coin.resetCoin();
         }
     }
 
