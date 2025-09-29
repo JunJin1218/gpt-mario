@@ -5,6 +5,8 @@ public class CoinDynamics : MonoBehaviour
     // ==== PUBLIC =====
     public Rigidbody2D coinBody;
     public Animator coinAnimator;
+    public AudioSource audioSource;
+    public AudioClip coinSound;
     public float coinSpeed = 5;
     void jumpCoin()
     {
@@ -18,5 +20,10 @@ public class CoinDynamics : MonoBehaviour
         coinBody.bodyType = RigidbodyType2D.Static;
         coinAnimator.SetTrigger("reset");
 
+    }
+    public void PlayCoinSound()
+    {
+        if (audioSource != null && coinSound != null)
+            audioSource.PlayOneShot(coinSound);
     }
 }
